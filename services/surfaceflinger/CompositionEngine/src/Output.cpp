@@ -1112,7 +1112,7 @@ compositionengine::Output::ColorProfile Output::pickColorProfile(
     }
 
     ui::Dataspace hdrDataSpace;
-    bool isHdrClientComposition = false;
+    [[maybe_unused]] bool isHdrClientComposition = false;
     ui::Dataspace bestDataSpace = getBestDataspace(&hdrDataSpace, &isHdrClientComposition);
 
     switch (refreshArgs.forceOutputColorMode) {
@@ -1127,8 +1127,9 @@ compositionengine::Output::ColorProfile Output::pickColorProfile(
     }
 
     // respect hdrDataSpace only when there is no legacy HDR support
+    // Do not let client composition of overlapping layers cancel HDR color mode
     const bool isHdr = hdrDataSpace != ui::Dataspace::UNKNOWN &&
-            !mDisplayColorProfile->hasLegacyHdrSupport(hdrDataSpace) && !isHdrClientComposition;
+            !mDisplayColorProfile->hasLegacyHdrSupport(hdrDataSpace);
     if (isHdr) {
         bestDataSpace = hdrDataSpace;
     }
